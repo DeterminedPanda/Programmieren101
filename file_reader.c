@@ -40,7 +40,7 @@ char* readUserInput() {
  * @parameter A: Will contain the read CSV file.
  *
  * @return 0: Everything went fine. The File has been read into A.
- * @return -1: Couldn't read file. Permission error denied or file doesn't exists.
+ * @return -1: Couldn't read file. Permission denied error or file doesn't exists.
  */
 int readCSVFile(const char *filePath, Matrix *A) {
 	char *absolutePath = formatFilePath(filePath);
@@ -51,6 +51,18 @@ int readCSVFile(const char *filePath, Matrix *A) {
 		return -1;
 	}
 
+	int numberOfLines = 0;
+	int returnCode = getNumberOfLines(absolutePath, &numberOfLines);
+	if(returnCode == -1)
+		return -1;
+
+	/** 
+	 * Rule conform CSV files have N amount of lines and N + 2 amount of rows.
+	 * There have to be N + 2 rows, because of the coefficient "b" and the optional iteration vector "x" that are 
+	 * included in the CSV files.
+	 **/ 
+	int numberOfColumns = numberOfLines + 2
+
 	FILE *file = fopen(absolutePath, "r");
 	if(file == NULL)
 		return -1;
@@ -58,6 +70,13 @@ int readCSVFile(const char *filePath, Matrix *A) {
 	char *line;
 	size_t length;
 	while((getline(&line, &length, file)) != -1) {
+		double tuple[numberOfRows];
+		char *token = strtok(line, ",");
+		for(int i = 0; token != NULL, i++) {
+			tuple[i] = atof(token);
+			token = strtok(NULL, ",");
+		}
+		A->data = tuple;
 		printf("Current line: %s\n", line);
 	}
 
@@ -104,11 +123,12 @@ bool isRelativePath(const char *path) {
  * Counts the number of lines inside of a file that are seperated by the newline character "\n".
  *
  * @parameter filePath: The path to the file which will have it lines counted. The path can be absolute or relative.
+ * @parameter numberOfLines: The number of lines inside of the passed file will be saved in this variable.
  *
- * @return -1: Couldn't read file. Permission error denied or file doesn't exists.
+ * @return -1: Couldn't read file. Permission denied error or file doesn't exists.
  * @return 0: The file was accessible and the number of lines has been counted.
  */
-int getNumberOfLines(const char *filePath, int *numberOfRows) {
+int getNumberOfLines(const char *filePath, int *numberOfLines) {
 	char *absolutePath = formatFilePath(filePath);
 
 	//check if file is available and readable	
