@@ -90,6 +90,37 @@ char* formatFilePath(const char *filePath) {
 	return absolutePath;
 }
 
+/**
+ * Checks if the passed path is a relative or absolute path. 
+ * Absolute paths start with a backslash and relative paths dont.
+ *
+ * @parameter path: The to be checked path.
+ */
 bool isRelativePath(const char *path) {
 	return path[0] != '/';
+}
+
+/**
+ * Counts the number of lines inside of a file that are seperated by the newline character "\n".
+ *
+ * @parameter filePath: The path to the file which will have it lines counted. The path can be absolute or relative.
+ *
+ * @return -1: Couldn't read file. Permission error denied or file doesn't exists.
+ * @return 0: The file was accessible and the number of lines has been counted.
+ */
+int getNumberOfLines(const char *filePath, int *numberOfRows) {
+	char *absolutePath = formatFilePath(filePath);
+
+	//check if file is available and readable	
+	if(access(absolutePath, R_OK) == -1) {
+		return -1;
+	}
+
+	char *line;
+	size_t length;
+	while((getline(&line, &length, file)) != -1) {
+		*numberOfLines++;
+	}
+
+	return 0;
 }
