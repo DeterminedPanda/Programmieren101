@@ -14,7 +14,7 @@
  */
 char* readUserInput() {
 	int stringLength = 0;
-	int mallocSize = 32; //expected string length is initially set to 32
+	int mallocSize = 32; //expected string length is initially set to 32, will be doubled if exceeded.
 	char *charArray = malloc(sizeof(char) * mallocSize);
 
 	char currentChar;
@@ -46,7 +46,7 @@ int readCSVFile(const char *filePath, Matrix *A) {
 	char *absolutePath = formatFilePath(filePath);
 	printf("Current Directory: %s\n", absolutePath);
 
-	//check if file is available and readable
+	//check if file exists and is readable	
 	if(access(absolutePath, R_OK) == -1) {
 		return -1;
 	}
@@ -58,7 +58,7 @@ int readCSVFile(const char *filePath, Matrix *A) {
 
 	/** 
 	 * Rule conform CSV files have N amount of lines and N + 2 amount of rows.
-	 * There have to be N + 2 rows, because of the coefficient "b" and the optional iteration vector "x" that are 
+	 * There have to be N + 2 columns, because of the coefficient "b" and the optional iteration vector "x" that are 
 	 * included in the CSV files.
 	 **/ 
 	int numberOfColumns = numberOfLines + 2
@@ -91,13 +91,12 @@ int readCSVFile(const char *filePath, Matrix *A) {
  *
  * @parameter filePath: The file path that will be transformed into an absolute file path.
  *
- * @return absolutePath: The absolute file path representation of filePath.
+ * @return: The absolute file path representation of filePath.
  */
 char* formatFilePath(const char *filePath) {
 	char *absolutePath = malloc(PATH_MAX);
-	bool isRelative = isRelativePath(filePath);
 
-	if(isRelative) {
+	if(isRelativePath(filePath)) {
 		//transform the relative path to an absolute path
 		getcwd(absolutePath, PATH_MAX);
 		strcat(absolutePath, "/");
@@ -114,6 +113,8 @@ char* formatFilePath(const char *filePath) {
  * Absolute paths start with a backslash and relative paths dont.
  *
  * @parameter path: The to be checked path.
+ * 
+ * @return: Returns wether the passed parameter path is a relative path (true) or an absolute path (false).
  */
 bool isRelativePath(const char *path) {
 	return path[0] != '/';
@@ -131,7 +132,7 @@ bool isRelativePath(const char *path) {
 int getNumberOfLines(const char *filePath, int *numberOfLines) {
 	char *absolutePath = formatFilePath(filePath);
 
-	//check if file is available and readable	
+	//check if file exists and is readable	
 	if(access(absolutePath, R_OK) == -1) {
 		return -1;
 	}
