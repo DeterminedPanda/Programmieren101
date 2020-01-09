@@ -1,1 +1,2 @@
 main #ignore the generated executable file
+*.swp #ignore all swp files created by vim
