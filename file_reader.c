@@ -43,47 +43,62 @@ char* readUserInput() {
  * @return -1: Couldn't read file. Permission denied error or file doesn't exists.
  */
 int readCSVFile(const char *filePath, Matrix *A) {
+	int numberOfLines = 0, numberOfColumns = 0;
 	char *absolutePath = formatFilePath(filePath);
-	printf("Current Directory: %s\n", absolutePath);
+	printf("Derzeitige Datei: %s\n", absolutePath);
 
 	//check if file exists and is readable	
 	if(access(absolutePath, R_OK) == -1) {
 		return -1;
 	}
 
-	int numberOfLines = 0;
 	int returnCode = getNumberOfLines(absolutePath, &numberOfLines);
 	if(returnCode == -1)
 		return -1;
 
-	/** 
+	/* 
 	 * Rule conform CSV files have N amount of lines and N + 2 amount of rows.
 	 * There have to be N + 2 columns, because of the coefficient "b" and the optional iteration vector "x" that are 
 	 * included in the CSV files.
-	 **/ 
-	int numberOfColumns = numberOfLines + 2
+	 */ 
+	numberOfColumns = numberOfLines + 2;
 
 	FILE *file = fopen(absolutePath, "r");
 	if(file == NULL)
 		return -1;
 
-	char *line;
-	size_t length;
-	while((getline(&line, &length, file)) != -1) {
-		double tuple[numberOfRows];
+	A->data = malloc(numberOfLines * sizeof(double*));
+	for(int i = 0; i < numberOfLines; i++) {
+		A->data[i] = malloc(numberOfColumns * sizeof(double));
+	}
+
+	char *line = NULL;
+	size_t length = 0;
+	for(int i = 0; (getline(&line, &length, file)) != -1; i++) {
 		char *token = strtok(line, ",");
-		for(int i = 0; token != NULL, i++) {
-			tuple[i] = atof(token);
+		for(int j = 0; token != NULL; j++) {
+			//omit newline character from token
+			if(strstr(token, "\n") != NULL) {
+				char *occurence = strstr(token, "\n");
+				strncpy(occurence, "", 1);
+			}
+
+			A->data[i][j] = atof(token);
 			token = strtok(NULL, ",");
 		}
-		A->data = tuple;
-		printf("Current line: %s\n", line);
+	}
+
+	for(int i = 0; i < numberOfLines; i++) {
+		for(int j = 0; j < numberOfColumns; j++) {
+			printf("%f ", A->data[i][j]);
+		}
+		printf("\n");
 	}
 
 	return 0;
 }
 
-/**
+/*
  * Formats the passed parameter filePath into an absolute file path.
  * I.e. path/to/file.csv would be transformed to /home/user/path/to/file.csv
  * If the passed parameter filePath is already an absolute file path, then it will simply returned without any changes.
@@ -108,7 +123,7 @@ char* formatFilePath(const char *filePath) {
 	return absolutePath;
 }
 
-/**
+/*
  * Checks if the passed path is a relative or absolute path. 
  * Absolute paths start with a backslash and relative paths dont.
  *
@@ -120,7 +135,7 @@ bool isRelativePath(const char *path) {
 	return path[0] != '/';
 }
 
-/**
+/*
  * Counts the number of lines inside of a file that are seperated by the newline character "\n".
  *
  * @parameter filePath: The path to the file which will have it lines counted. The path can be absolute or relative.
@@ -137,11 +152,28 @@ int getNumberOfLines(const char *filePath, int *numberOfLines) {
 		return -1;
 	}
 
-	char *line;
-	size_t length;
+	FILE *file = fopen(absolutePath, "r");
+	if(file == NULL)
+		return -1;
+
+	char *line = NULL;
+	size_t length = 0;
 	while((getline(&line, &length, file)) != -1) {
-		*numberOfLines++;
+		*numberOfLines = *numberOfLines + 1;
 	}
 
 	return 0;
+}
+
+/*
+ * Frees the alloacted data in the Matrix.
+ *
+ * @parameter A: The Matrix that contains data that was alloacted using malloc().
+ */
+void freeMatrix(Matrix *A) {
+	int numberOfLines = A->n;
+
+	for(int i = 0; i < numberOfLines; i++) {
+		free(A[i]);
+	}
 }

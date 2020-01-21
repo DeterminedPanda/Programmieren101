@@ -1,2 +1,4 @@
 main #ignore the generated executable file
 *.swp #ignore all swp files created by vim
+*.o #ignore all output files from gcc
+prog #ignore the compiled program
