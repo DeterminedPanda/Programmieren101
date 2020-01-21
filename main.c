@@ -55,7 +55,7 @@ bool load(const char *fileName, Matrix *A, Vector *b, Vector *x) {
 //TODO add description
 void solve (Method method, Matrix *A, Vector *b, Vector *x, double e) {
 	if(method == GAUSS_SEIDEL) {
-		printf("Führe die Gauss Seidel Methode aus...\n");
+		printf("Führe die Gauss-Seidel Methode aus...\n");
 		calculateWithGaussSeidelMethod(A, b, x, e);
 	} else if(method == JACOBI) {
 		printf("Führe die Jacobi Methode aus...\n");
