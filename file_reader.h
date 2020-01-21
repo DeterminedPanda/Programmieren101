@@ -3,7 +3,7 @@
 #include "main.h"
 
 char* readUserInput();
-int readCSVFile(const char *filePath, Matrix *A);
+int readCSVFile(const char *filePath, Matrix *A, Vector *b, Vector *x);
 bool isRelativePath(const char *path);
 char* formatFilePath(const char *filePath); 
 int getNumberOfLines(const char *filePath, int *numberOfLines);

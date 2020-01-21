@@ -2,5 +2,5 @@
 #define JACOBI_H
 #include "data_structures.h"
 
-void calculateWithJacobiMethod();
+void calculateWithJacobiMethod(Matrix *A, Vector *b, Vector *x, double e);
 #endif

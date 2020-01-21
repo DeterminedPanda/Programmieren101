@@ -42,8 +42,7 @@ char* readUserInput() {
  * @return 0: Everything went fine. The File has been read into A.
  * @return -1: Couldn't read file. Permission denied error or file doesn't exists.
  */
-int readCSVFile(const char *filePath, Matrix *A) {
-	int numberOfLines = 0, numberOfColumns = 0;
+int readCSVFile(const char *filePath, Matrix *A, Vector *b, Vector *x) {
 	char *absolutePath = formatFilePath(filePath);
 	printf("Derzeitige Datei: %s\n", absolutePath);
 
@@ -52,48 +51,41 @@ int readCSVFile(const char *filePath, Matrix *A) {
 		return -1;
 	}
 
-	int returnCode = getNumberOfLines(absolutePath, &numberOfLines);
-	if(returnCode == -1)
-		return -1;
-
 	/* 
+	 * TODO update this description
 	 * Rule conform CSV files have N amount of lines and N + 2 amount of rows.
 	 * There have to be N + 2 columns, because of the coefficient "b" and the optional iteration vector "x" that are 
 	 * included in the CSV files.
 	 */ 
-	numberOfColumns = numberOfLines + 2;
+	int numberOfLines = (int) A->n, coefficientBIndex = numberOfLines + 1, coefficientXIndex = numberOfLines + 2;
 
 	FILE *file = fopen(absolutePath, "r");
 	if(file == NULL)
 		return -1;
 
-	A->data = malloc(numberOfLines * sizeof(double*));
-	for(int i = 0; i < numberOfLines; i++) {
-		A->data[i] = malloc(numberOfColumns * sizeof(double));
-	}
-
 	char *line = NULL;
 	size_t length = 0;
-	for(int i = 0; (getline(&line, &length, file)) != -1; i++) {
+	for(int currentLine = 0; (getline(&line, &length, file)) != -1; currentLine++) {
 		char *token = strtok(line, ",");
-		for(int j = 0; token != NULL; j++) {
+		for(int currentColumn = 0; token != NULL; currentColumn++) {
 			//omit newline character from token
 			if(strstr(token, "\n") != NULL) {
 				char *occurence = strstr(token, "\n");
 				strncpy(occurence, "", 1);
 			}
 
-			A->data[i][j] = atof(token);
+			if(currentColumn == coefficientBIndex -1) {
+				b->data[currentLine] = atof(token);
+			} else if(currentColumn == coefficientXIndex-1) {
+				x->data[currentLine] = atof(token);
+			} else {
+				A->data[currentLine][currentColumn] = atof(token);
+			}
 			token = strtok(NULL, ",");
 		}
 	}
 
-	for(int i = 0; i < numberOfLines; i++) {
-		for(int j = 0; j < numberOfColumns; j++) {
-			printf("%f ", A->data[i][j]);
-		}
-		printf("\n");
-	}
+	fclose(file);
 
 	return 0;
 }
@@ -162,18 +154,7 @@ int getNumberOfLines(const char *filePath, int *numberOfLines) {
 		*numberOfLines = *numberOfLines + 1;
 	}
 
+	fclose(file);
+
 	return 0;
-}
-
-/*
- * Frees the alloacted data in the Matrix.
- *
- * @parameter A: The Matrix that contains data that was alloacted using malloc().
- */
-void freeMatrix(Matrix *A) {
-	int numberOfLines = A->n;
-
-	for(int i = 0; i < numberOfLines; i++) {
-		free(A[i]);
-	}
 }
