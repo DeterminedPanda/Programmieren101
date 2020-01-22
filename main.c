@@ -40,19 +40,36 @@ int main(void) {
 		solve(JACOBI, A, b, x, 1e-10);
 
 		free(fileName);
-		/*freeMatrix(A);*/
-		/*freeVector(b);*/
-		/*freeVector(x);*/
+		freeMatrix(A);
+		freeVector(b);
+		freeVector(x);
 	}
 	return 0;
 }
 
-//TODO add description
+/*
+ * Wrapper Function, because honestly readCSVFile is a way better name than load.
+ *
+ * @parameter fileName:
+ * @parameter A:
+ * @parameter b:
+ * @parameter x:
+ *
+ * @return: 
+ */
 bool load(const char *fileName, Matrix *A, Vector *b, Vector *x) {
 	return readCSVFile(fileName, A, b, x) != -1;
 }
 
-//TODO add description
+/*
+ * Solves the linear equation using the passed method (See the Method enumerator for a list of methods). 
+ *
+ * @parameter method:
+ * @parameter A:
+ * @parameter b:
+ * @parameter x:
+ * @parameter e:
+ */
 void solve (Method method, Matrix *A, Vector *b, Vector *x, double e) {
 	if(method == GAUSS_SEIDEL) {
 		printf("Führe die Gauss-Seidel Methode aus...\n");
