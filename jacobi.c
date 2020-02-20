@@ -1,13 +1,14 @@
 #include <stdio.h>
 #include "jacobi.h"
 
+//TODO finish and clean up :)
 /*
  * Solves the linear equation using the Jacobi method.
  *
- * @parameter A:
- * @parameter b:
- * @parameter x:
- * @parameter e:
+ * @parameter A: The Matrix containing the coefficients a.
+ * @parameter b: The Vector containing the coefficients b.
+ * @parameter x: The Vector containing the coefficients x.
+ * @parameter e: The approximation error.
  */
 void calculateWithJacobiMethod(Matrix *A, Vector *b, Vector *x, double e) {
 	int iteration = 0, maxIterations = 20, n = A->n;

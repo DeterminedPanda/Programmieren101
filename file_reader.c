@@ -8,7 +8,7 @@
 /*
  * Reads and returns the user input from stdin.
  * The initial size of the array is 32 and will continously be doubled as long as the user input exceeds this limit.
- * Since the array is dynamically allocated (using malloc and realloc) the returned array has to be manually freed (using free).
+ * Since the array is dynamically allocated the returned array has to be manually freed.
  *
  * @return charArray: pointer to the first element of the char array.
  */
@@ -34,7 +34,7 @@ char* readUserInput() {
 }
 
 /*
- * Reads the specified CSV file into the Matrix A.
+ * Reads the specified CSV file into the Matrix A, the Vector b and the Vector x.
  * 
  * @parameter filePath: Path of the CSV file that is supposed to be read into A. May be an absolute or relative path.
  * @parameter A: Will contain the read CSV file.
@@ -52,12 +52,11 @@ int readCSVFile(const char *filePath, Matrix *A, Vector *b, Vector *x) {
 	}
 
 	/* 
-	 * TODO update this description
 	 * Rule conform CSV files have N amount of lines and N + 2 amount of rows.
 	 * There have to be N + 2 columns, because of the coefficient "b" and the optional iteration vector "x" that are 
 	 * included in the CSV files.
 	 */ 
-	int numberOfLines = (int) A->n, coefficientBIndex = numberOfLines + 1, coefficientXIndex = numberOfLines + 2;
+	int numberOfLines = (int) A->n, coefficientBIndex = numberOfLines, coefficientXIndex = numberOfLines + 1;
 
 	FILE *file = fopen(absolutePath, "r");
 	if(file == NULL)
@@ -74,9 +73,9 @@ int readCSVFile(const char *filePath, Matrix *A, Vector *b, Vector *x) {
 				strncpy(occurence, "", 1);
 			}
 
-			if(currentColumn == coefficientBIndex -1) {
+			if(currentColumn == coefficientBIndex) {
 				b->data[currentLine] = atof(token);
-			} else if(currentColumn == coefficientXIndex-1) {
+			} else if(currentColumn == coefficientXIndex) {
 				x->data[currentLine] = atof(token);
 			} else {
 				A->data[currentLine][currentColumn] = atof(token);

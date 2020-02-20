@@ -3,11 +3,12 @@
 #include "data_structures.h"
 
 /*
- * TODO add description
- * Allocate enough memory to hold a 2d array of the size numberOfLines * numberOfLines.
+ * Initializes the passed Matrix by allocating a 2d with the dimensions numberOfLines * numberOfLines.
+ * The 2d array is dynamically allocated and therefore needs to be freed manually.
+ * The freeMatrix function can be used for this.
  *
- * @parameter A:
- * @parameter numberOfLines: 
+ * @parameter A: The Matrix that will be initialized.
+ * @parameter numberOfLines: The number of lines that will also be the number of columns in the 2d array.
  */
 void initializeMatrix(Matrix *A, const int numberOfLines) {
 	A->n = numberOfLines;
@@ -19,7 +20,8 @@ void initializeMatrix(Matrix *A, const int numberOfLines) {
 }
 
 /*
- * Initializes the members of the Vector.
+ * Initializes the members of the Vector dynamically and therefore needs to be freed manually.
+ * The freeVector function can be used for this.
  */
 void initializeVector(Vector *V, const int numberOfElements) {
 	V->n = numberOfElements;
@@ -30,7 +32,7 @@ void initializeVector(Vector *V, const int numberOfElements) {
 /*
  * Prints the passed Matrix in stdout.
  *
- * @parameter A: The Matrix that will have its data member printed.
+ * @parameter A: The Matrix that will have its member "data" printed.
  */
 void printMatrix(Matrix *A) {
 	int n = A->n;
@@ -47,7 +49,7 @@ void printMatrix(Matrix *A) {
 /*
  * Prints the passed Vector in stdout.
  *
- * @parameter V: The Vector that will have its data member printed.
+ * @parameter V: The Vector that will have its member "data" printed.
  */
 void printVector(Vector *V) {
 	int numberOfElements = V->n;
@@ -63,7 +65,7 @@ void printVector(Vector *V) {
 /* 
  * Frees the allocated data in the Matrix.
  *
- * @parameter A: The Matrix containing data that was allocated using malloc().
+ * @parameter A: The Matrix that will have its memory freed.
  */
 void freeMatrix(Matrix *A) {
 	int numberOfLines = A->n;
@@ -78,7 +80,7 @@ void freeMatrix(Matrix *A) {
 /*
  * Frees the allocated data in the Vector.
  *
- * @parameter V: The Vector containing data that was allocated using malloc().
+ * @parameter V: The Vector that will have its memory freed.
  */
 void freeVector(Vector *V) {
 	free(V->data);
