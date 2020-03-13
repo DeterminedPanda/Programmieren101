@@ -65,8 +65,10 @@ int readCSVFile(const char *filePath, Matrix *A, Vector *b, Vector *x) {
 	char *line = NULL;
 	size_t length = 0;
 	for(int currentLine = 0; (getline(&line, &length, file)) != -1; currentLine++) {
+		
 		char *token = strtok(line, ",");
 		for(int currentColumn = 0; token != NULL; currentColumn++) {
+			
 			//omit newline character from token
 			if(strstr(token, "\n") != NULL) {
 				char *occurence = strstr(token, "\n");
