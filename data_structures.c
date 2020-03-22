@@ -71,6 +71,7 @@ void printVectorList(struct VectorList *VL) {
 	struct VectorList *current = VL;
 
 	for(int i = 0; current != NULL; i++) {
+		printf("%d. ", i + 1);
 		printVector(current->V);
 		current = current->next;
 	}
@@ -111,8 +112,19 @@ void freeVector(Vector *V) {
 	free(V);
 }
 
-
-//TODO 
+/*
+ * Frees the alloacted Vector Linked List.
+ *
+ * @parameter VL: The starting point. From here all following VectorList nodes will be freed.
+ */
 void freeVectorList(struct VectorList *VL) {
+	struct VectorList *current = VL;
+	struct VectorList *tmp;
 
+	while(current != NULL) {
+		tmp = current;
+		current = current->next;
+		freeVector(tmp->V);
+		free(tmp);
+	}
 }

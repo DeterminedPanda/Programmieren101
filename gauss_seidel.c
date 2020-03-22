@@ -12,7 +12,7 @@
  * @parameter x: The Vector containing the coefficients x.
  * @parameter e: The approximation error.
  *
- * @return head: //TODO
+ * @return head: Returns the Vector Linked List containing all the iterations.
  */
 struct VectorList* calculateWithGaussSeidelMethod(Matrix *A, Vector *b, Vector *x, double e) {
 	int maxIterations = 100, n = A->n;
@@ -43,42 +43,3 @@ struct VectorList* calculateWithGaussSeidelMethod(Matrix *A, Vector *b, Vector *
 
 	return NULL;
 }
-
-
-
-/*void lol() {*/
-
-/*for(int iteration = 0; iteration < maxIterations; iteration++) {*/
-/*bool convergence = true;*/
-
-
-/*for(int i = 0; i < n; i++) {*/
-/*double sum = 0.0;*/
-
-/*for(int j = 0; j < i - 1; j++) {*/
-/*sum += A->data[i][j] * xNew->data[j];*/
-/*}*/
-
-/*for(int j = i + 1; j < n; j++) {*/
-/*sum += A->data[i][j] * x->data[j];*/
-/*}*/
-
-/*xNew->data[i] = (1/A->data[i][i]) * (b->data[i] - sum);*/
-
-/*if(fabs(xNew->data[i] - x->data[i]) > e) {*/
-/*convergence = false;*/
-/*}*/
-/*}*/
-
-/*for(int i = 0; i < n; i++) {*/
-/*x->data[i] = xNew->data[i];*/
-/*}*/
-
-/*printf("Iteration: %d ", iteration);*/
-/*printVector(xNew);*/
-/*if(convergence) */
-/*break;*/
-/*}*/
-
-/*return NULL;*/
-/*}*/

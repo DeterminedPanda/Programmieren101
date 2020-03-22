@@ -8,17 +8,17 @@
 
 int main(void) {
 	printf("Willkommen bei dem Jacobi-Verfahren und Gauß-Seidel-Verfahren Rechner von Justinas Maniscalco AI19B.\n");
-	while(1) {
-		printf("Bitte geben Sie den relativen oder absoluten Pfad einer gültigen CSV Datei ein: ");
 
-		int error = 0, numberOfLines = 0;
+	while(1) {
+		int error = 0, numberOfLines = 0, userInput = 0;
+
+		printf("Bitte geben Sie den relativen oder absoluten Pfad einer gültigen CSV Datei ein: ");
 		char *fileName = readUserInput();
 		error = getNumberOfLines(fileName, &numberOfLines);
 		if(error == -1) {
 			printf("Fehler: Die Datei konnte nicht geöffnet werden. Bitte stellen Sie sicher dass diese existiert und Leseberechtigung besteht.\n\n");
-			continue;
+			goto cleanup_fileName;
 		}
-
 
 		Matrix *A = malloc(sizeof(Matrix));
 		initializeMatrix(A, numberOfLines);
@@ -30,55 +30,102 @@ int main(void) {
 		bool loadedSuccessfully = load(fileName, A, b, x);
 		if(!loadedSuccessfully) {
 			printf("Fehler: Die Datei konnte nicht geöffnet werden. Bitte stellen Sie sicher dass diese existiert und Leseberechtigung besteht.\n\n");
-			continue;
+			goto cleanup_CSV;
+		}
+
+		error = isMatrixValid(A);
+		if(error == -1) {
+			printf("Fehler: Die Matrx A hat Nullen in der Diagonale.\n\n");
+			goto cleanup_CSV;
+		} else if(error == -2) {
+			printf("Fehler: Die Matrix A ist nicht Diagonal Dominant.\n\n");
+			goto cleanup_CSV;
 		}
 
 
-		int methodIndex = 0;
-		printf("Wählen Sie ein Iterationsverfahren aus, in dem Sie die korrespondierende Zahl eingeben:\n");
-		printf("(1) Jacobi\n");
-		printf("(2) Gauss-Seidel\n");
-		printf("Ihr gewünschtes Iterationsverfahren: ");
-		scanf("%d", &methodIndex);
-		clearInputBuffer();
-
-		if(methodIndex != 1 && methodIndex != 2) {
+		userInput = askUserIterationMethod();
+		if(userInput != 1 && userInput != 2) {
 			printf("Ungültige Eingabe.\n\n");
-			continue;
+			goto cleanup_CSV;
 		}
 
-		double epsilon = 0.0;
-		printf("Geben Sie nun eine Fehlerschranke ein (z.B. 1e-10): ");
-		scanf("%lf", &epsilon);
-		clearInputBuffer();
-
-		struct VectorList *VL = solve(methodIndex - 1, A, b, x, epsilon);
-
-		int vectorIndex = 0;
-		printf("Die Berechnung wurde durchgeführt. Wählen Sie aus wie viele Vektoren ausgegeben werden sollen, in dem Sie die korrespondierende Zahl eingeben:\n");
-		printf("(1) Alle Vektoren\n");
-		printf("(2) Nur der letzte Vektor\n");
-		printf("Ihre gewünschte Ausgabe: ");
-		scanf("%d", &vectorIndex);
-		clearInputBuffer();
-
-		if(vectorIndex == 1) {
+		double epsilon = askUserEpsilon();
+		struct VectorList *VL = solve(userInput - 1, A, b, x, epsilon);
+		userInput = askUserOutputMethod();
+		if(userInput == 1) {
 			printVectorList(VL);	
-		} else if(vectorIndex == 2) {
+		} else if(userInput == 2) {
 			printVectorListTail(VL);
 		} else {
 			printf("Ungültige Eingabe.\n\n");
+			goto cleanup_VectorList;
 		}
 
-		//TODO this has to be put at the beginning of the loop, otherwise it might not be freed after continue has been executed.
-		free(fileName);
+cleanup_VectorList:
+		freeVectorList(VL);
+
+cleanup_CSV:
 		freeMatrix(A);
 		freeVector(b);
 		freeVector(x);
-		freeVectorList(VL);
+
+cleanup_fileName:
+		free(fileName);
+
+		userInput = askUserRestart();
+		if(userInput == 1) {
+			continue;
+		} else {
+			break;
+		}
 	}
 
 	return 0;
+}
+
+int askUserIterationMethod() {
+	int userInput = 0;
+	printf("Wählen Sie ein Iterationsverfahren aus, in dem Sie die korrespondierende Zahl eingeben:\n");
+	printf("(1) Jacobi\n");
+	printf("(2) Gauss-Seidel\n");
+	printf("Ihr gewünschtes Iterationsverfahren: ");
+	scanf("%d", &userInput);
+	clearInputBuffer();
+
+	return userInput;
+}
+
+double askUserEpsilon() {
+	double userInput = 0.0;
+	printf("Geben Sie nun eine Fehlerschranke ein (z.B. 1e-10): ");
+	scanf("%lf", &userInput);
+	clearInputBuffer();
+
+	return userInput;
+}
+
+int askUserOutputMethod() {
+	int userInput = 0;
+	printf("Die Berechnung wurde durchgeführt. Wählen Sie aus wie viele Vektoren ausgegeben werden sollen, in dem Sie die korrespondierende Zahl eingeben:\n");
+	printf("(1) Alle Vektoren\n");
+	printf("(2) Nur der letzte Vektor\n");
+	printf("Ihre gewünschte Ausgabe: ");
+	scanf("%d", &userInput);
+	clearInputBuffer();
+
+	return userInput;
+}
+
+int askUserRestart() {
+	int userInput = 0;
+	printf("Soll eine neue Berechnung gestartet werden?\n");
+	printf("(1) Ja\n");
+	printf("(2) Nein\n");
+	printf("Ihre Eingabe: ");
+	scanf("%d", &userInput);
+	clearInputBuffer();
+
+	return userInput;
 }
 
 /*
@@ -104,7 +151,7 @@ bool load(const char *fileName, Matrix *A, Vector *b, Vector *x) {
  * @parameter x: The Vector containing the coefficients x.
  * @parameter e: The approximation error.
  *
- * @return: //TODO
+ * @return struct VectorList: Returns a Linked List full of Vectors if the calclulations have been completed successfully. The pointer points to the first element of the Linked List.
  */
 struct VectorList* solve (Method method, Matrix *A, Vector *b, Vector *x, double e) {
 	if(method == GAUSS_SEIDEL) {

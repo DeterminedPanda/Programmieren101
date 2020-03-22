@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <limits.h>
 #include <string.h>
+#include <ctype.h>
 #include "file_reader.h"
 
 /*
@@ -49,6 +50,7 @@ void clearInputBuffer() {
  *
  * @return 0: Everything went fine. The File has been read into A.
  * @return -1: Couldn't read file. Permission denied error or file doesn't exists.
+ * @return -2: Aborted reading file, because a non number value was found in the CSV.
  */
 int readCSVFile(const char *filePath, Matrix *A, Vector *b, Vector *x) {
 	char *absolutePath = formatFilePath(filePath);
@@ -99,31 +101,56 @@ int readCSVFile(const char *filePath, Matrix *A, Vector *b, Vector *x) {
 	return 0;
 }
 
+/*
+ * Checks if the passed Matrix is dioganally dominant and if the diogana doesn't contain any zeros.
+ *
+ * @return 0: Matrix is valid.
+ * @return -1: The Matrix contains zeros in its diagonal.
+ * @return -2: The Matrix is not diagonally dominant.
+ */
+int isMatrixValid(Matrix *A) {
+	if(!isDiagonalNonZero(A)) {
+		return -1;
+	} else if(!isDiagonalDominant(A)) {
+		return -2;
+	}
 
-/*TODO finish this*/
-/*int isValid() {*/
-	/*if(isDigit() != 0) {*/
-		/*return -1;*/
-	/*}*/
+	return 0;
+}
 
-	/*if(isDiagonalNonZero() != 0) {*/
-		/*return -2;*/
-	/*}*/
+int isDiagonalDominant(Matrix *A) {
+	int n = A->n;
 
-	/*return 0;*/
-/*}*/
+	for(int i = 0; i < n; i++) {
 
-/*int isDigit() {*/
-	/*if not valid return -1;*/
-	/*return 0;*/
-/*}*/
+		double sum = 0.0;
+		for(int j = 0; j < n; j++) {
+			if(j == i) 
+				continue;
 
-/*int isDiagonalNonZero() {*/
-	/*if not valid return -1;*/
-	/*return 0;*/
-/*}*/
+			sum += A->data[i][j];
+		}
 
+		if(A->data[i][i] < sum) {
+			printf("---Diagonale innerhalb der Matrix an der Stelle %d %d ist nicht dominant.---\n", i+1, i+1);
+			return 0;
+		}
+	}
 
+	return 1;
+}
+
+int isDiagonalNonZero(Matrix *A) {
+	int n = A->n;
+
+	for(int i = 0; i < n; i++) {
+		if(A->data[i][i] == 0) {
+			printf("---Null innerhalb der Matrix an der Stelle %d %d gefunden.---\n", i+1, i+1);
+			return 0;
+		}
+	}
+	return 1;
+}
 
 /*
  * Formats the passed parameter filePath into an absolute file path.
@@ -174,7 +201,7 @@ bool isRelativePath(const char *path) {
 int getNumberOfLines(const char *filePath, int *numberOfLines) {
 	char *absolutePath = formatFilePath(filePath);
 
-	//check if file exists and is readable	
+	//check if file exists and is readable
 	if(access(absolutePath, R_OK) == -1) {
 		return -1;
 	}
