@@ -53,13 +53,29 @@ int main(void) {
 		clearInputBuffer();
 
 		struct VectorList *VL = solve(methodIndex - 1, A, b, x, epsilon);
-		printVectorList(VL);
+
+		int vectorIndex = 0;
+		printf("Die Berechnung wurde durchgeführt. Wählen Sie aus wie viele Vektoren ausgegeben werden sollen, in dem Sie die korrespondierende Zahl eingeben:\n");
+		printf("(1) Alle Vektoren\n");
+		printf("(2) Nur der letzte Vektor\n");
+		printf("Ihre gewünschte Ausgabe: ");
+		scanf("%d", &vectorIndex);
+		clearInputBuffer();
+
+		if(vectorIndex == 1) {
+			printVectorList(VL);	
+		} else if(vectorIndex == 2) {
+			printVectorListTail(VL);
+		} else {
+			printf("Ungültige Eingabe.\n\n");
+		}
 
 		//TODO this has to be put at the beginning of the loop, otherwise it might not be freed after continue has been executed.
 		free(fileName);
 		freeMatrix(A);
 		freeVector(b);
 		freeVector(x);
+		freeVectorList(VL);
 	}
 
 	return 0;
@@ -87,6 +103,8 @@ bool load(const char *fileName, Matrix *A, Vector *b, Vector *x) {
  * @parameter b: The Vector containing the coefficients b.
  * @parameter x: The Vector containing the coefficients x.
  * @parameter e: The approximation error.
+ *
+ * @return: //TODO
  */
 struct VectorList* solve (Method method, Matrix *A, Vector *b, Vector *x, double e) {
 	if(method == GAUSS_SEIDEL) {

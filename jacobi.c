@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "jacobi.h"
 #include <math.h>
+#include "jacobi.h"
 
 /*
  * Solves the linear equation using the Jacobi method.
@@ -12,7 +12,7 @@
  * @parameter x: The Vector containing the coefficients x.
  * @parameter e: The approximation error.
  *
- * @return head: 
+ * @return head: //TODO
  */
 struct VectorList* calculateWithJacobiMethod(Matrix *A, Vector *b, Vector *x, double e) {
 	int maxIterations = 100, n = A->n;
@@ -25,11 +25,11 @@ struct VectorList* calculateWithJacobiMethod(Matrix *A, Vector *b, Vector *x, do
 	for(int iteration = 0; iteration < maxIterations; iteration++) {
 		bool convergence = true;
 		for(int i = 0; i < n; i++) { //loop of equations
+
 			double sum = 0.0;
-			for(int j = 0; j < n; j++) { //loop of summation
+			for(int j = 0; j < n; j++) //loop of summation
 				if(j != i)
 					sum += A->data[i][j] * x->data[j];
-			}
 
 			xNew->data[i] = -1 / A->data[i][i] * (sum - b->data[i]);
 			if(fabs(xNew->data[i] - x->data[i]) > e) {

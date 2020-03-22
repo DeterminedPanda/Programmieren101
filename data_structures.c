@@ -59,7 +59,7 @@ void printMatrix(Matrix *A) {
 void printVector(Vector *V) {
 	int numberOfElements = V->n;
 
-	printf("Vector:\n");
+	printf("Vektor:\n");
 	for(int i = 0; i < numberOfElements; i++) {
 		printf("%.10f ", V->data[i]);
 
@@ -74,6 +74,16 @@ void printVectorList(struct VectorList *VL) {
 		printVector(current->V);
 		current = current->next;
 	}
+}
+
+void printVectorListTail(struct VectorList *VL) {
+	struct VectorList *current = VL;
+
+	while(current->next != NULL) {
+		current = current->next;
+	}
+
+	printVector(current->V);
 }
 
 /* 

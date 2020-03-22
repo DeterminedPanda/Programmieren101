@@ -25,6 +25,7 @@ void initializeVectorList(struct VectorList *VL, Vector *V, struct VectorList *n
 void printMatrix(Matrix *A);
 void printVector(Vector *V);
 void printVectorList(struct VectorList *VL);
+void printVectorListTail(struct VectorList *VL);
 void freeMatrix(Matrix *A);
 void freeVector(Vector *V);
 void freeVectorList(struct VectorList *VL);
