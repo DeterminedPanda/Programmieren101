@@ -29,6 +29,11 @@ void initializeVector(Vector *V, const int numberOfElements) {
 	V->data = malloc(numberOfElements * sizeof(double));
 }
 
+void initializeVectorList(struct VectorList *VL, Vector *V, struct VectorList *next) {
+	VL->V = V;
+	VL->next = next;
+}
+
 /*
  * Prints the passed Matrix in stdout.
  *
@@ -40,7 +45,7 @@ void printMatrix(Matrix *A) {
 	printf("Matrix:\n");
 	for(int i = 0; i < n; i++) {
 		for(int j = 0; j < n; j++) {
-			printf("%f ", A->data[i][j]);
+			printf("%.10f ", A->data[i][j]);
 		}
 		printf("\n");
 	}
@@ -56,9 +61,18 @@ void printVector(Vector *V) {
 
 	printf("Vector:\n");
 	for(int i = 0; i < numberOfElements; i++) {
-		printf("%f ", V->data[i]);
+		printf("%.10f ", V->data[i]);
 
 		printf("\n");
+	}
+}
+
+void printVectorList(struct VectorList *VL) {
+	struct VectorList *current = VL;
+
+	for(int i = 0; current != NULL; i++) {
+		printVector(current->V);
+		current = current->next;
 	}
 }
 
@@ -85,4 +99,10 @@ void freeMatrix(Matrix *A) {
 void freeVector(Vector *V) {
 	free(V->data);
 	free(V);
+}
+
+
+//TODO 
+void freeVectorList(struct VectorList *VL) {
+
 }

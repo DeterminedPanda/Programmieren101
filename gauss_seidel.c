@@ -9,6 +9,7 @@
  * @parameter x: The Vector containing the coefficients x.
  * @parameter e: The approximation error.
  */
-void calculateWithGaussSeidelMethod(Matrix *A, Vector *b, Vector *x, double e) {
+struct VectorList* calculateWithGaussSeidelMethod(Matrix *A, Vector *b, Vector *x, double e) {
+	return NULL;
 }
 

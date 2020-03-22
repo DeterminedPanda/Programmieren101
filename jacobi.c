@@ -1,7 +1,9 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
 #include "jacobi.h"
+#include <math.h>
 
-//TODO finish and clean up :)
 /*
  * Solves the linear equation using the Jacobi method.
  *
@@ -9,29 +11,47 @@
  * @parameter b: The Vector containing the coefficients b.
  * @parameter x: The Vector containing the coefficients x.
  * @parameter e: The approximation error.
+ *
+ * @return head: 
  */
-void calculateWithJacobiMethod(Matrix *A, Vector *b, Vector *x, double e) {
-	int iteration = 0, maxIterations = 20, n = A->n;
+struct VectorList* calculateWithJacobiMethod(Matrix *A, Vector *b, Vector *x, double e) {
+	int maxIterations = 100, n = A->n;
+	Vector *xNew = malloc(sizeof(Vector));
+	initializeVector(xNew, n);
+	struct VectorList *head = malloc(sizeof(struct VectorList));
+	initializeVectorList(head, xNew, NULL);
+	struct VectorList *tail = head;
 
-	while(1) {
-		if(iteration >= maxIterations)
-			break;
-
-		printf("%2d: ", iteration + 1);
-
-		for(int i = 0; i < n; i++) {
-			float sigma = 0.0;
-
-			for(int j = 0; j < n; j++) {
-				if(i != j) {
-					sigma = sigma + A->data[i][j]*x->data[j];
-				}
+	for(int iteration = 0; iteration < maxIterations; iteration++) {
+		bool convergence = true;
+		for(int i = 0; i < n; i++) { //loop of equations
+			double sum = 0.0;
+			for(int j = 0; j < n; j++) { //loop of summation
+				if(j != i)
+					sum += A->data[i][j] * x->data[j];
 			}
 
-			x->data[i] = (1/A->data[i][i]) * (b->data[i] - sigma);
-			printf("%.10f ", x->data[i]);
+			xNew->data[i] = -1 / A->data[i][i] * (sum - b->data[i]);
+			if(fabs(xNew->data[i] - x->data[i]) > e) {
+				convergence = false;
+			}
 		}
-		printf("\n");
-		iteration++;
+
+		struct VectorList *current = malloc(sizeof(struct VectorList));
+		Vector *V = malloc(sizeof(Vector));
+		initializeVector(V, n);
+		initializeVectorList(current, V, NULL);
+
+		for(int i = 0; i < n; i++) {
+			x->data[i] = xNew->data[i];
+			current->V->data[i] = xNew->data[i];
+		}
+		tail->next = current;
+		tail = current;
+
+		if(convergence)
+			break;
 	}
+
+	return head;
 }

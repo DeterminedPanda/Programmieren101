@@ -1,8 +1,10 @@
 #ifndef FILE_READER_H
 #define FILE_READER_H
 #include "main.h"
+#include <termios.h>
 
 char* readUserInput();
+void clearInputBuffer();
 int readCSVFile(const char *filePath, Matrix *A, Vector *b, Vector *x);
 bool isRelativePath(const char *path);
 char* formatFilePath(const char *filePath); 

@@ -18,7 +18,7 @@ char* readUserInput() {
 	char *charArray = malloc(sizeof(char) * mallocSize);
 
 	char currentChar;
-	while((currentChar = fgetc(stdin)) != EOF && currentChar != '\n') {
+	while((currentChar = getchar()) != '\n' && currentChar != EOF) {
 		charArray[stringLength] = currentChar;
 		stringLength++;
 
@@ -31,6 +31,14 @@ char* readUserInput() {
 	charArray[stringLength] = '\0';
 
 	return charArray;
+}
+
+/*
+ * Clears the leftover characters from stdin.
+ */
+void clearInputBuffer() {
+	int c;
+	while ((c = getchar()) != '\n' && c != EOF);
 }
 
 /*
@@ -65,10 +73,10 @@ int readCSVFile(const char *filePath, Matrix *A, Vector *b, Vector *x) {
 	char *line = NULL;
 	size_t length = 0;
 	for(int currentLine = 0; (getline(&line, &length, file)) != -1; currentLine++) {
-		
+
 		char *token = strtok(line, ",");
 		for(int currentColumn = 0; token != NULL; currentColumn++) {
-			
+
 			//omit newline character from token
 			if(strstr(token, "\n") != NULL) {
 				char *occurence = strstr(token, "\n");
@@ -90,6 +98,32 @@ int readCSVFile(const char *filePath, Matrix *A, Vector *b, Vector *x) {
 
 	return 0;
 }
+
+
+/*TODO finish this*/
+/*int isValid() {*/
+	/*if(isDigit() != 0) {*/
+		/*return -1;*/
+	/*}*/
+
+	/*if(isDiagonalNonZero() != 0) {*/
+		/*return -2;*/
+	/*}*/
+
+	/*return 0;*/
+/*}*/
+
+/*int isDigit() {*/
+	/*if not valid return -1;*/
+	/*return 0;*/
+/*}*/
+
+/*int isDiagonalNonZero() {*/
+	/*if not valid return -1;*/
+	/*return 0;*/
+/*}*/
+
+
 
 /*
  * Formats the passed parameter filePath into an absolute file path.
