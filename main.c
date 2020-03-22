@@ -129,7 +129,7 @@ int askUserRestart() {
 }
 
 /*
- * Wrapper Function, because honestly readCSVFile is a way better name than load.
+ * Wrapper function of readCSVFile.
  *
  * @parameter fileName: The name or path of the file. The file format m
  * @parameter A: The Matrix containing the coefficients a.

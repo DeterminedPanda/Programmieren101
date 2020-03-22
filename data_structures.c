@@ -29,6 +29,9 @@ void initializeVector(Vector *V, const int numberOfElements) {
 	V->data = malloc(numberOfElements * sizeof(double));
 }
 
+/*
+ * Initializes the members of the VectorList.
+ */
 void initializeVectorList(struct VectorList *VL, Vector *V, struct VectorList *next) {
 	VL->V = V;
 	VL->next = next;
@@ -67,6 +70,11 @@ void printVector(Vector *V) {
 	}
 }
 
+/*
+ * Prints the passed VectorList in stdout.
+ *
+ * @parameter VL: The VectorList that will have its Vector members printed.
+ */
 void printVectorList(struct VectorList *VL) {
 	struct VectorList *current = VL;
 
@@ -77,6 +85,9 @@ void printVectorList(struct VectorList *VL) {
 	}
 }
 
+/*
+ * Prints the Vector member of the last VectorList inside of VL.
+ */
 void printVectorListTail(struct VectorList *VL) {
 	struct VectorList *current = VL;
 

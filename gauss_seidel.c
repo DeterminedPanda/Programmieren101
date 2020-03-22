@@ -18,28 +18,41 @@ struct VectorList* calculateWithGaussSeidelMethod(Matrix *A, Vector *b, Vector *
 	int maxIterations = 100, n = A->n;
 	Vector *xNew = malloc(sizeof(Vector));
 	initializeVector(xNew, n);
+	struct VectorList *head = malloc(sizeof(struct VectorList));
+	initializeVectorList(head, xNew, NULL);
+	struct VectorList *tail = head;
 
 	for(int iteration = 0; iteration < maxIterations; iteration++) {
+		bool convergence = true;
 
 		for(int i = 0; i < n; i++) {
-			double sum1 = 0.0, sum2= 0.0;
-
-			for(int j = 0; j < (i - 1); j++) {
-				sum1 += A->data[i][j] * xNew->data[j];
+			double sum = 0;
+			for(int j = 0; j < n; j++) {
+				if(j != i) {
+					sum += A->data[i][j] * xNew->data[j];
+				}
 			}
-
-			for(int j = (i + 1); j < n; j++) {
-				sum2 += A->data[i][j] * x->data[j]; 
-			}
-
-			xNew->data[i] = (1/A->data[i][i]) * (b->data[i] - sum1 - sum2);
+			xNew->data[i] = (1/A->data[i][i]) * (b->data[i] - sum);
+			if(fabs(xNew->data[i] - x->data[i]) > e)
+				convergence = false;
 		}
+
+		struct VectorList *current = malloc(sizeof(struct VectorList));
+		Vector *V = malloc(sizeof(Vector));
+		initializeVector(V, n);
+		initializeVectorList(current, V, NULL);
+		tail->next = current;
+		tail = current;
 
 		for(int i = 0; i < n; i++) {
 			x->data[i] = xNew->data[i];
+			current->V->data[i] = xNew->data[i];
 		}
 
+		if(convergence)
+			break;
 	}
 
-	return NULL;
+
+	return head->next; //head is still pointing at tail, so we need to return head->next instead.
 }
